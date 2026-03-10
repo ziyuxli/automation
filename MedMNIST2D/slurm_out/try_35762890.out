@@ -1,0 +1,236 @@
++ export HF_HOME=/ocean/projects/cis250072p/wanyuef/hf-cache
++ HF_HOME=/ocean/projects/cis250072p/wanyuef/hf-cache
++ export HF_HUB_CACHE=/ocean/projects/cis250072p/wanyuef/hf-cache/hub
++ HF_HUB_CACHE=/ocean/projects/cis250072p/wanyuef/hf-cache/hub
++ export TRANSFORMERS_CACHE=/ocean/projects/cis250072p/wanyuef/hf-cache/hub
++ TRANSFORMERS_CACHE=/ocean/projects/cis250072p/wanyuef/hf-cache/hub
++ mkdir -p /ocean/projects/cis250072p/wanyuef/hf-cache/hub
++ huggingface-cli scan-cache --dir /jet/home/wanyuef/.cache/huggingface
++ true
++ export BIGCACHE=/ocean/projects/cis250072p/wanyuef/.big-cache
++ BIGCACHE=/ocean/projects/cis250072p/wanyuef/.big-cache
++ export XDG_CACHE_HOME=/ocean/projects/cis250072p/wanyuef/.big-cache/xdg
++ XDG_CACHE_HOME=/ocean/projects/cis250072p/wanyuef/.big-cache/xdg
++ mkdir -p /ocean/projects/cis250072p/wanyuef/.big-cache/xdg
++ export TORCHINDUCTOR_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/torchinductor
++ TORCHINDUCTOR_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/torchinductor
++ export TRITON_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/triton
++ TRITON_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/triton
++ export VLLM_TORCH_COMPILE_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache
++ VLLM_TORCH_COMPILE_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache
++ export CUDA_CACHE_PATH=/ocean/projects/cis250072p/wanyuef/.big-cache/cuda
++ CUDA_CACHE_PATH=/ocean/projects/cis250072p/wanyuef/.big-cache/cuda
++ mkdir -p /ocean/projects/cis250072p/wanyuef/.big-cache/torchinductor /ocean/projects/cis250072p/wanyuef/.big-cache/triton /ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache /ocean/projects/cis250072p/wanyuef/.big-cache/cuda
++ export VLLM_TORCH_COMPILE_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache
++ VLLM_TORCH_COMPILE_CACHE_DIR=/ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache
++ mkdir -p /ocean/projects/cis250072p/wanyuef/.big-cache/vllm/torch_compile_cache
++ cd /ocean/projects/cis250072p/wanyuef/asu/experiments/MedMNIST2D
++ module load anaconda3
+++ /usr/share/lmod/lmod/libexec/lmod bash load anaconda3
++ eval '__LMOD_REF_COUNT_ACLOCAL_PATH=/opt/packages/anaconda3-2024.10-1/share/aclocal:1;' export '__LMOD_REF_COUNT_ACLOCAL_PATH;' 'ACLOCAL_PATH=/opt/packages/anaconda3-2024.10-1/share/aclocal;' export 'ACLOCAL_PATH;' '__LMOD_REF_COUNT_CMAKE_PREFIX_PATH=/opt/packages/anaconda3-2024.10-1:1;' export '__LMOD_REF_COUNT_CMAKE_PREFIX_PATH;' 'CMAKE_PREFIX_PATH=/opt/packages/anaconda3-2024.10-1;' export 'CMAKE_PREFIX_PATH;' 'CONDA_PKGS_DIRS=\$HOME/.conda/pkgs/;' export 'CONDA_PKGS_DIRS;' '__LMOD_REF_COUNT_CPLUS_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include:1;' export '__LMOD_REF_COUNT_CPLUS_INCLUDE_PATH;' 'CPLUS_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include;' export 'CPLUS_INCLUDE_PATH;' '__LMOD_REF_COUNT_C_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include:1;' export '__LMOD_REF_COUNT_C_INCLUDE_PATH;' 'C_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include;' export 'C_INCLUDE_PATH;' '__LMOD_REF_COUNT_INCLUDE=/opt/packages/anaconda3-2024.10-1/include:1;' export '__LMOD_REF_COUNT_INCLUDE;' 'INCLUDE=/opt/packages/anaconda3-2024.10-1/include;' export 'INCLUDE;' '__LMOD_REF_COUNT_LOADEDMODULES=allocations/1.0:1\;psc.allocations.user/1.0:1\;anaconda3/2024.10-1:1;' export '__LMOD_REF_COUNT_LOADEDMODULES;' 'LOADEDMODULES=allocations/1.0:psc.allocations.user/1.0:anaconda3/2024.10-1;' export 'LOADEDMODULES;' '__LMOD_REF_COUNT_MANPATH=/usr/share/lmod/lmod/share/man:1\;/opt/puppetlabs/puppet/share/man:1\;/opt/packages/anaconda3-2024.10-1/man:1\;/opt/packages/anaconda3-2024.10-1/share/man:1;' export '__LMOD_REF_COUNT_MANPATH;' 'MANPATH=/usr/share/lmod/lmod/share/man::/opt/puppetlabs/puppet/share/man:/opt/packages/anaconda3-2024.10-1/man:/opt/packages/anaconda3-2024.10-1/share/man;' export 'MANPATH;' 'MODULEPATH=/etc/scl/modulefiles:/opt/modulefiles/production:/opt/modulefiles/preproduction:/opt/modulefiles/deprecated:/usr/share/modulefiles:/usr/share/modulefiles/Linux:/usr/share/modulefiles/Core:/usr/share/lmod/lmod/modulefiles/Core;' export 'MODULEPATH;' '__LMOD_REF_COUNT_PATH=/opt/packages/anaconda3-2024.10-1/bin:2\;/opt/packages/anaconda3-2024.10-1/condabin:2\;/jet/home/wanyuef/.local/bin:1\;/jet/home/wanyuef/bin:1\;/opt/packages/psc.allocations.user/bin:1\;/opt/packages/allocations/bin:1\;/usr/local/bin:1\;/usr/bin:1\;/usr/local/sbin:1\;/usr/sbin:1\;/opt/packages/interact/bin:1\;/opt/puppetlabs/bin:1;' export '__LMOD_REF_COUNT_PATH;' 'PATH=/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin;' export 'PATH;' '__LMOD_REF_COUNT_PKG_CONFIG_PATH=/opt/packages/anaconda3-2024.10-1/lib/pkgconfig:1;' export '__LMOD_REF_COUNT_PKG_CONFIG_PATH;' 'PKG_CONFIG_PATH=/opt/packages/anaconda3-2024.10-1/lib/pkgconfig;' export 'PKG_CONFIG_PATH;' '__LMOD_REF_COUNT__LMFILES_=/opt/modulefiles/production/allocations/1.0.lua:1\;/opt/modulefiles/production/psc.allocations.user/1.0.lua:1\;/opt/modulefiles/production/anaconda3/2024.10-1.lua:1;' export '__LMOD_REF_COUNT__LMFILES_;' '_LMFILES_=/opt/modulefiles/production/allocations/1.0.lua:/opt/modulefiles/production/psc.allocations.user/1.0.lua:/opt/modulefiles/production/anaconda3/2024.10-1.lua;' export '_LMFILES_;' '_ModuleTable001_=X01vZHVsZVRhYmxlXz17WyJNVHZlcnNpb24iXT0zLFsiY19yZWJ1aWxkVGltZSJdPWZhbHNlLFsiY19zaG9ydFRpbWUiXT1mYWxzZSxkZXB0aFQ9e30sZmFtaWx5PXt9LG1UPXthbGxvY2F0aW9ucz17WyJmbiJdPSIvb3B0L21vZHVsZWZpbGVzL3Byb2R1Y3Rpb24vYWxsb2NhdGlvbnMvMS4wLmx1YSIsWyJmdWxsTmFtZSJdPSJhbGxvY2F0aW9ucy8xLjAiLFsibG9hZE9yZGVyIl09MSxwcm9wVD17fSxbInN0YWNrRGVwdGgiXT0wLFsic3RhdHVzIl09ImFjdGl2ZSIsWyJ1c2VyTmFtZSJdPSJhbGxvY2F0aW9ucyIsfSxhbmFjb25kYTM9e1siZm4iXT0iL29wdC9tb2R1bGVmaWxlcy9wcm9kdWN0aW9uL2FuYWNvbmRhMy8yMDI0LjEwLTEubHVhIixbImZ1bGxOYW1lIl09ImFuYWNv;' export '_ModuleTable001_;' '_ModuleTable002_=bmRhMy8yMDI0LjEwLTEiLFsibG9hZE9yZGVyIl09Myxwcm9wVD17fSxbInN0YWNrRGVwdGgiXT0wLFsic3RhdHVzIl09ImFjdGl2ZSIsWyJ1c2VyTmFtZSJdPSJhbmFjb25kYTMiLH0sWyJwc2MuYWxsb2NhdGlvbnMudXNlciJdPXtbImZuIl09Ii9vcHQvbW9kdWxlZmlsZXMvcHJvZHVjdGlvbi9wc2MuYWxsb2NhdGlvbnMudXNlci8xLjAubHVhIixbImZ1bGxOYW1lIl09InBzYy5hbGxvY2F0aW9ucy51c2VyLzEuMCIsWyJsb2FkT3JkZXIiXT0yLHByb3BUPXt9LFsic3RhY2tEZXB0aCJdPTAsWyJzdGF0dXMiXT0iYWN0aXZlIixbInVzZXJOYW1lIl09InBzYy5hbGxvY2F0aW9ucy51c2VyIix9LH0sbXBhdGhBPXsiL2V0Yy9zY2wvbW9kdWxlZmlsZXMiLCIvb3B0L21vZHVsZWZp;' export '_ModuleTable002_;' '_ModuleTable003_=bGVzL3Byb2R1Y3Rpb24iLCIvb3B0L21vZHVsZWZpbGVzL3ByZXByb2R1Y3Rpb24iLCIvb3B0L21vZHVsZWZpbGVzL2RlcHJlY2F0ZWQiLCIvdXNyL3NoYXJlL21vZHVsZWZpbGVzIiwiL3Vzci9zaGFyZS9tb2R1bGVmaWxlcy9MaW51eCIsIi91c3Ivc2hhcmUvbW9kdWxlZmlsZXMvQ29yZSIsIi91c3Ivc2hhcmUvbG1vZC9sbW9kL21vZHVsZWZpbGVzL0NvcmUiLH0sWyJzeXN0ZW1CYXNlTVBBVEgiXT0iL2V0Yy9zY2wvbW9kdWxlZmlsZXM6L29wdC9tb2R1bGVmaWxlcy9wcm9kdWN0aW9uOi9vcHQvbW9kdWxlZmlsZXMvcHJlcHJvZHVjdGlvbjovb3B0L21vZHVsZWZpbGVzL2RlcHJlY2F0ZWQ6L3Vzci9zaGFyZS9tb2R1bGVmaWxlczovdXNyL3NoYXJlL21vZHVsZWZpbGVzL0xp;' export '_ModuleTable003_;' '_ModuleTable004_=bnV4Oi91c3Ivc2hhcmUvbW9kdWxlZmlsZXMvQ29yZTovdXNyL3NoYXJlL2xtb2QvbG1vZC9tb2R1bGVmaWxlcy9Db3JlIix9;' export '_ModuleTable004_;' '_ModuleTable_Sz_=4;' export '_ModuleTable_Sz_;' '__LMOD_STACK_CONDA_PKGS_DIRS=JEhPTUUvLmNvbmRhL3BrZ3Mv;' export '__LMOD_STACK_CONDA_PKGS_DIRS;' source '/opt/packages/anaconda3-2024.10-1/etc/profile.d/conda.sh;' conda 'activate;'
+++ __LMOD_REF_COUNT_ACLOCAL_PATH=/opt/packages/anaconda3-2024.10-1/share/aclocal:1
+++ export __LMOD_REF_COUNT_ACLOCAL_PATH
+++ ACLOCAL_PATH=/opt/packages/anaconda3-2024.10-1/share/aclocal
+++ export ACLOCAL_PATH
+++ __LMOD_REF_COUNT_CMAKE_PREFIX_PATH=/opt/packages/anaconda3-2024.10-1:1
+++ export __LMOD_REF_COUNT_CMAKE_PREFIX_PATH
+++ CMAKE_PREFIX_PATH=/opt/packages/anaconda3-2024.10-1
+++ export CMAKE_PREFIX_PATH
+++ CONDA_PKGS_DIRS='$HOME/.conda/pkgs/'
+++ export CONDA_PKGS_DIRS
+++ __LMOD_REF_COUNT_CPLUS_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include:1
+++ export __LMOD_REF_COUNT_CPLUS_INCLUDE_PATH
+++ CPLUS_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include
+++ export CPLUS_INCLUDE_PATH
+++ __LMOD_REF_COUNT_C_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include:1
+++ export __LMOD_REF_COUNT_C_INCLUDE_PATH
+++ C_INCLUDE_PATH=/opt/packages/anaconda3-2024.10-1/include
+++ export C_INCLUDE_PATH
+++ __LMOD_REF_COUNT_INCLUDE=/opt/packages/anaconda3-2024.10-1/include:1
+++ export __LMOD_REF_COUNT_INCLUDE
+++ INCLUDE=/opt/packages/anaconda3-2024.10-1/include
+++ export INCLUDE
+++ __LMOD_REF_COUNT_LOADEDMODULES='allocations/1.0:1;psc.allocations.user/1.0:1;anaconda3/2024.10-1:1'
+++ export __LMOD_REF_COUNT_LOADEDMODULES
+++ LOADEDMODULES=allocations/1.0:psc.allocations.user/1.0:anaconda3/2024.10-1
+++ export LOADEDMODULES
+++ __LMOD_REF_COUNT_MANPATH='/usr/share/lmod/lmod/share/man:1;/opt/puppetlabs/puppet/share/man:1;/opt/packages/anaconda3-2024.10-1/man:1;/opt/packages/anaconda3-2024.10-1/share/man:1'
+++ export __LMOD_REF_COUNT_MANPATH
+++ MANPATH=/usr/share/lmod/lmod/share/man::/opt/puppetlabs/puppet/share/man:/opt/packages/anaconda3-2024.10-1/man:/opt/packages/anaconda3-2024.10-1/share/man
+++ export MANPATH
+++ MODULEPATH=/etc/scl/modulefiles:/opt/modulefiles/production:/opt/modulefiles/preproduction:/opt/modulefiles/deprecated:/usr/share/modulefiles:/usr/share/modulefiles/Linux:/usr/share/modulefiles/Core:/usr/share/lmod/lmod/modulefiles/Core
+++ export MODULEPATH
+++ __LMOD_REF_COUNT_PATH='/opt/packages/anaconda3-2024.10-1/bin:2;/opt/packages/anaconda3-2024.10-1/condabin:2;/jet/home/wanyuef/.local/bin:1;/jet/home/wanyuef/bin:1;/opt/packages/psc.allocations.user/bin:1;/opt/packages/allocations/bin:1;/usr/local/bin:1;/usr/bin:1;/usr/local/sbin:1;/usr/sbin:1;/opt/packages/interact/bin:1;/opt/puppetlabs/bin:1'
+++ export __LMOD_REF_COUNT_PATH
+++ PATH=/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin
+++ export PATH
+++ __LMOD_REF_COUNT_PKG_CONFIG_PATH=/opt/packages/anaconda3-2024.10-1/lib/pkgconfig:1
+++ export __LMOD_REF_COUNT_PKG_CONFIG_PATH
+++ PKG_CONFIG_PATH=/opt/packages/anaconda3-2024.10-1/lib/pkgconfig
+++ export PKG_CONFIG_PATH
+++ __LMOD_REF_COUNT__LMFILES_='/opt/modulefiles/production/allocations/1.0.lua:1;/opt/modulefiles/production/psc.allocations.user/1.0.lua:1;/opt/modulefiles/production/anaconda3/2024.10-1.lua:1'
+++ export __LMOD_REF_COUNT__LMFILES_
+++ _LMFILES_=/opt/modulefiles/production/allocations/1.0.lua:/opt/modulefiles/production/psc.allocations.user/1.0.lua:/opt/modulefiles/production/anaconda3/2024.10-1.lua
+++ export _LMFILES_
+++ _ModuleTable001_=X01vZHVsZVRhYmxlXz17WyJNVHZlcnNpb24iXT0zLFsiY19yZWJ1aWxkVGltZSJdPWZhbHNlLFsiY19zaG9ydFRpbWUiXT1mYWxzZSxkZXB0aFQ9e30sZmFtaWx5PXt9LG1UPXthbGxvY2F0aW9ucz17WyJmbiJdPSIvb3B0L21vZHVsZWZpbGVzL3Byb2R1Y3Rpb24vYWxsb2NhdGlvbnMvMS4wLmx1YSIsWyJmdWxsTmFtZSJdPSJhbGxvY2F0aW9ucy8xLjAiLFsibG9hZE9yZGVyIl09MSxwcm9wVD17fSxbInN0YWNrRGVwdGgiXT0wLFsic3RhdHVzIl09ImFjdGl2ZSIsWyJ1c2VyTmFtZSJdPSJhbGxvY2F0aW9ucyIsfSxhbmFjb25kYTM9e1siZm4iXT0iL29wdC9tb2R1bGVmaWxlcy9wcm9kdWN0aW9uL2FuYWNvbmRhMy8yMDI0LjEwLTEubHVhIixbImZ1bGxOYW1lIl09ImFuYWNv
+++ export _ModuleTable001_
+++ _ModuleTable002_=bmRhMy8yMDI0LjEwLTEiLFsibG9hZE9yZGVyIl09Myxwcm9wVD17fSxbInN0YWNrRGVwdGgiXT0wLFsic3RhdHVzIl09ImFjdGl2ZSIsWyJ1c2VyTmFtZSJdPSJhbmFjb25kYTMiLH0sWyJwc2MuYWxsb2NhdGlvbnMudXNlciJdPXtbImZuIl09Ii9vcHQvbW9kdWxlZmlsZXMvcHJvZHVjdGlvbi9wc2MuYWxsb2NhdGlvbnMudXNlci8xLjAubHVhIixbImZ1bGxOYW1lIl09InBzYy5hbGxvY2F0aW9ucy51c2VyLzEuMCIsWyJsb2FkT3JkZXIiXT0yLHByb3BUPXt9LFsic3RhY2tEZXB0aCJdPTAsWyJzdGF0dXMiXT0iYWN0aXZlIixbInVzZXJOYW1lIl09InBzYy5hbGxvY2F0aW9ucy51c2VyIix9LH0sbXBhdGhBPXsiL2V0Yy9zY2wvbW9kdWxlZmlsZXMiLCIvb3B0L21vZHVsZWZp
+++ export _ModuleTable002_
+++ _ModuleTable003_=bGVzL3Byb2R1Y3Rpb24iLCIvb3B0L21vZHVsZWZpbGVzL3ByZXByb2R1Y3Rpb24iLCIvb3B0L21vZHVsZWZpbGVzL2RlcHJlY2F0ZWQiLCIvdXNyL3NoYXJlL21vZHVsZWZpbGVzIiwiL3Vzci9zaGFyZS9tb2R1bGVmaWxlcy9MaW51eCIsIi91c3Ivc2hhcmUvbW9kdWxlZmlsZXMvQ29yZSIsIi91c3Ivc2hhcmUvbG1vZC9sbW9kL21vZHVsZWZpbGVzL0NvcmUiLH0sWyJzeXN0ZW1CYXNlTVBBVEgiXT0iL2V0Yy9zY2wvbW9kdWxlZmlsZXM6L29wdC9tb2R1bGVmaWxlcy9wcm9kdWN0aW9uOi9vcHQvbW9kdWxlZmlsZXMvcHJlcHJvZHVjdGlvbjovb3B0L21vZHVsZWZpbGVzL2RlcHJlY2F0ZWQ6L3Vzci9zaGFyZS9tb2R1bGVmaWxlczovdXNyL3NoYXJlL21vZHVsZWZpbGVzL0xp
+++ export _ModuleTable003_
+++ _ModuleTable004_=bnV4Oi91c3Ivc2hhcmUvbW9kdWxlZmlsZXMvQ29yZTovdXNyL3NoYXJlL2xtb2QvbG1vZC9tb2R1bGVmaWxlcy9Db3JlIix9
+++ export _ModuleTable004_
+++ _ModuleTable_Sz_=4
+++ export _ModuleTable_Sz_
+++ __LMOD_STACK_CONDA_PKGS_DIRS=JEhPTUUvLmNvbmRhL3BrZ3Mv
+++ export __LMOD_STACK_CONDA_PKGS_DIRS
+++ source /opt/packages/anaconda3-2024.10-1/etc/profile.d/conda.sh
++++ export CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
++++ CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
++++ CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
++++ '[' -z x ']'
+++ conda activate
+++ local cmd=activate
+++ case "$cmd" in
+++ __conda_activate activate
+++ '[' -n '' ']'
+++ local ask_conda
++++ PS1=
++++ __conda_exe shell.posix activate
++++ /opt/packages/anaconda3-2024.10-1/bin/conda shell.posix activate
+++ ask_conda='. "/opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh"
+PS1='\''(base) '\''
+export PATH='\''/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/python'\''
+. "/opt/packages/anaconda3-2024.10-1/etc/conda/activate.d/libglib_activate.sh"'
+++ eval '. "/opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh"
+PS1='\''(base) '\''
+export PATH='\''/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin'\''
+export CONDA_SHLVL='\''1'\''
+export CONDA_PROMPT_MODIFIER='\''(base) '\''
+export CONDA_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/python'\''
+. "/opt/packages/anaconda3-2024.10-1/etc/conda/activate.d/libglib_activate.sh"'
++++ . /opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh
+++++ export GSETTINGS_SCHEMA_DIR=
+++++ GSETTINGS_SCHEMA_DIR=
+++++ unset GSETTINGS_SCHEMA_DIR_CONDA_BACKUP
+++++ '[' -z ']'
+++++ unset GSETTINGS_SCHEMA_DIR
++++ PS1='(base) '
++++ export PATH=/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin
++++ PATH=/opt/packages/anaconda3-2024.10-1/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin
++++ export CONDA_SHLVL=1
++++ CONDA_SHLVL=1
++++ export 'CONDA_PROMPT_MODIFIER=(base) '
++++ CONDA_PROMPT_MODIFIER='(base) '
++++ export CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
++++ CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
++++ export _CE_M=
++++ _CE_M=
++++ export _CE_CONDA=
++++ _CE_CONDA=
++++ export CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
++++ CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
++++ . /opt/packages/anaconda3-2024.10-1/etc/conda/activate.d/libglib_activate.sh
+++++ export GSETTINGS_SCHEMA_DIR_CONDA_BACKUP=
+++++ GSETTINGS_SCHEMA_DIR_CONDA_BACKUP=
+++++ export GSETTINGS_SCHEMA_DIR=/opt/packages/anaconda3-2024.10-1/share/glib-2.0/schemas
+++++ GSETTINGS_SCHEMA_DIR=/opt/packages/anaconda3-2024.10-1/share/glib-2.0/schemas
+++ __conda_hashr
+++ '[' -n '' ']'
+++ '[' -n '' ']'
+++ hash -r
+++ : -s sh
++ eval
++ ret=0
++ /usr/share/lmod/8.2.7/libexec/log_modules load anaconda3
++ return 0
++ conda activate /ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
++ local cmd=activate
++ case "$cmd" in
++ __conda_activate activate /ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
++ '[' -n '' ']'
++ local ask_conda
+++ PS1='(base) '
+++ __conda_exe shell.posix activate /ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
+++ /opt/packages/anaconda3-2024.10-1/bin/conda shell.posix activate /ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
++ ask_conda='. "/opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh"
+PS1='\''(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '\''
+export PATH='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin'\''
+export CONDA_PREFIX='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist'\''
+export CONDA_PROMPT_MODIFIER='\''(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '\''
+export CONDA_PREFIX_1='\''/opt/packages/anaconda3-2024.10-1'\''
+export CONDA_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/python'\'''
++ eval '. "/opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh"
+PS1='\''(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '\''
+export PATH='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin'\''
+export CONDA_PREFIX='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist'\''
+export CONDA_SHLVL='\''2'\''
+export CONDA_DEFAULT_ENV='\''/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist'\''
+export CONDA_PROMPT_MODIFIER='\''(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '\''
+export CONDA_PREFIX_1='\''/opt/packages/anaconda3-2024.10-1'\''
+export CONDA_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/conda'\''
+export _CE_M='\'''\''
+export _CE_CONDA='\'''\''
+export CONDA_PYTHON_EXE='\''/opt/packages/anaconda3-2024.10-1/bin/python'\'''
+++ . /opt/packages/anaconda3-2024.10-1/etc/conda/deactivate.d/libglib_deactivate.sh
++++ export GSETTINGS_SCHEMA_DIR=
++++ GSETTINGS_SCHEMA_DIR=
++++ unset GSETTINGS_SCHEMA_DIR_CONDA_BACKUP
++++ '[' -z ']'
++++ unset GSETTINGS_SCHEMA_DIR
+++ PS1='(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '
+++ export PATH=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin
+++ PATH=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist/bin:/opt/packages/anaconda3-2024.10-1/condabin:/jet/home/wanyuef/.local/bin:/jet/home/wanyuef/bin:/opt/packages/psc.allocations.user/bin:/opt/packages/allocations/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/opt/packages/interact/bin:/opt/puppetlabs/bin
+++ export CONDA_PREFIX=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
+++ CONDA_PREFIX=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
+++ export CONDA_SHLVL=2
+++ CONDA_SHLVL=2
+++ export CONDA_DEFAULT_ENV=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
+++ CONDA_DEFAULT_ENV=/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
+++ export 'CONDA_PROMPT_MODIFIER=(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '
+++ CONDA_PROMPT_MODIFIER='(/ocean/projects/cis250072p/wanyuef/conda-envs/medmnist) '
+++ export CONDA_PREFIX_1=/opt/packages/anaconda3-2024.10-1
+++ CONDA_PREFIX_1=/opt/packages/anaconda3-2024.10-1
+++ export CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
+++ CONDA_EXE=/opt/packages/anaconda3-2024.10-1/bin/conda
+++ export _CE_M=
+++ _CE_M=
+++ export _CE_CONDA=
+++ _CE_CONDA=
+++ export CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
+++ CONDA_PYTHON_EXE=/opt/packages/anaconda3-2024.10-1/bin/python
++ __conda_hashr
++ '[' -n '' ']'
++ '[' -n '' ']'
++ hash -r
++ ALL_NODES=($(scontrol show hostnames $SLURM_NODELIST))
+++ scontrol show hostnames v006
++ COMMANDS=("python train_and_eval_pytorch.py --data_flag bloodmnist --gpu_ids 0 --output_root /ocean/projects/cis250072p/wanyuef/asu/output --num_epochs 100 --as_rgb --size 224 --resize --batch_size 128 --model_flag resnet50 --download --run model2")
++ for i in "${!COMMANDS[@]}"
++ start_idx=0
++ end_idx=8
++ GROUP_NODES=("${ALL_NODES[@]:$start_idx:8}")
+++ IFS=,
+++ echo v006
++ GROUP_NODELIST=v006
++ log_file=logs/debug_35762890_0.log
++ wait

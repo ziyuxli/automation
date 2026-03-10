@@ -43,7 +43,7 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
 
     device = torch.device('cuda:{}'.format(gpu_ids[0])) if gpu_ids else torch.device('cpu') 
     
-    output_root = os.path.join(output_root, data_flag, time.strftime("%y%m%d_%H%M%S"))
+    output_root = os.path.join(output_root, data_flag+str(size), model_flag+run, time.strftime("%y%m%d_%H%M%S"))
     if not os.path.exists(output_root):
         os.makedirs(output_root)
 
@@ -59,23 +59,23 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
             [transforms.ToTensor(),
             transforms.Normalize(mean=[.5], std=[.5])])
      
-    train_dataset = DataClass(split='train', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
-    val_dataset = DataClass(split='val', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
-    test_dataset = DataClass(split='test', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
+    train_dataset = DataClass(split='train', transform=data_transform, download=download, as_rgb=as_rgb, root='/ocean/projects/cis250072p/wanyuef/asu/data',size=size)
+    val_dataset = DataClass(split='val', transform=data_transform, download=download, as_rgb=as_rgb, root='/ocean/projects/cis250072p/wanyuef/asu/data', size=size)
+    test_dataset = DataClass(split='test', transform=data_transform, download=download, as_rgb=as_rgb, root='/ocean/projects/cis250072p/wanyuef/asu/data', size=size)
 
     
     train_loader = data.DataLoader(dataset=train_dataset,
                                 batch_size=batch_size,
-                                shuffle=True)
+                                shuffle=True, num_workers=8, pin_memory=True)
     train_loader_at_eval = data.DataLoader(dataset=train_dataset,
                                 batch_size=batch_size,
-                                shuffle=False)
+                                shuffle=False, num_workers=8, pin_memory=True)
     val_loader = data.DataLoader(dataset=val_dataset,
                                 batch_size=batch_size,
-                                shuffle=False)
+                                shuffle=False, num_workers=8, pin_memory=True)
     test_loader = data.DataLoader(dataset=test_dataset,
                                 batch_size=batch_size,
-                                shuffle=False)
+                                shuffle=False, num_workers=8, pin_memory=True)
 
     print('==> Building and training model...')
     
@@ -89,9 +89,9 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
 
     model = model.to(device)
 
-    train_evaluator = medmnist.Evaluator(data_flag, 'train', size=size)
-    val_evaluator = medmnist.Evaluator(data_flag, 'val', size=size)
-    test_evaluator = medmnist.Evaluator(data_flag, 'test', size=size)
+    train_evaluator = medmnist.Evaluator(data_flag, 'train', root='/ocean/projects/cis250072p/wanyuef/asu/data',size=size)
+    val_evaluator = medmnist.Evaluator(data_flag, 'val', root='/ocean/projects/cis250072p/wanyuef/asu/data',size=size)
+    test_evaluator = medmnist.Evaluator(data_flag, 'test', root='/ocean/projects/cis250072p/wanyuef/asu/data', size=size)
 
     if task == "multi-label, binary-class":
         criterion = nn.BCEWithLogitsLoss()
@@ -132,14 +132,14 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
     for epoch in trange(num_epochs):        
         train_loss = train(model, train_loader, task, criterion, optimizer, device, writer)
         
-        train_metrics = test(model, train_evaluator, train_loader_at_eval, task, criterion, device, run)
+        # train_metrics = test(model, train_evaluator, train_loader_at_eval, task, criterion, device, run)
         val_metrics = test(model, val_evaluator, val_loader, task, criterion, device, run)
         test_metrics = test(model, test_evaluator, test_loader, task, criterion, device, run)
         
         scheduler.step()
         
-        for i, key in enumerate(train_logs):
-            log_dict[key] = train_metrics[i]
+        # for i, key in enumerate(train_logs):
+        #     log_dict[key] = train_metrics[i]
         for i, key in enumerate(val_logs):
             log_dict[key] = val_metrics[i]
         for i, key in enumerate(test_logs):
@@ -149,12 +149,25 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
             writer.add_scalar(key, value, epoch)
             
         cur_auc = val_metrics[1]
+        print(f"\n[Epoch {epoch}]=====")
         if cur_auc > best_auc:
             best_epoch = epoch
             best_auc = cur_auc
             best_model = deepcopy(model)
             print('cur_best_auc:', best_auc)
             print('cur_best_epoch', best_epoch)
+        
+        if epoch%10==0:
+            checkpoint_model = deepcopy(model)
+            state_ckp = {
+                'net': checkpoint_model.state_dict(),
+            }
+            path = os.path.join(output_root, 'checkpoint.pth')
+            torch.save(state_ckp, path)
+
+            # Record best epoch info
+            with open(os.path.join(output_root, 'epoch_info.txt'), 'w') as f:
+                f.write(f'Epoch saved: {epoch}\n')
 
     state = {
         'net': best_model.state_dict(),
@@ -202,6 +215,7 @@ def train(model, train_loader, task, criterion, optimizer, device, writer):
 
         loss.backward()
         optimizer.step()
+        # print(f"{batch_idx}/{len(train_loader)}:loss:{loss}")
     
     epoch_loss = sum(total_loss)/len(total_loss)
     return epoch_loss

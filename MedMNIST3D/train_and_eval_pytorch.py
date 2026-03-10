@@ -44,7 +44,7 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, conv, pr
     device = torch.device('cuda:{}'.format(gpu_ids[0])) if gpu_ids else torch.device('cpu') 
     
         
-    output_root = os.path.join(output_root, data_flag, time.strftime("%y%m%d_%H%M%S"))
+    output_root = os.path.join(output_root, data_flag, model_flag+run, time.strftime("%y%m%d_%H%M%S"))
     if not os.path.exists(output_root):
         os.makedirs(output_root)
 

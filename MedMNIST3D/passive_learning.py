@@ -1,9 +1,10 @@
 import argparse
 import os
 import time
-from collections import OrderedDict
-from copy import deepcopy
 
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 import medmnist
 import numpy as np
 import torch
@@ -16,9 +17,9 @@ from models import ResNet18, ResNet50
 from utils import Transform3D, model_to_syncbn
 
 
-def main(data_flag, output_root, samples_per_round, epochs_per_round,
+def main(data_flag, output_root, samples_per_round, max_epochs,
          gpu_ids, batch_size, size, conv, pretrained_3d, download, model_flag,
-         as_rgb, shape_transform, run):
+         as_rgb, shape_transform, run, initial_size=200):
 
     lr = 0.001
 
@@ -81,18 +82,63 @@ def main(data_flag, output_root, samples_per_round, epochs_per_round,
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    # Pool of all training indices, start with empty labeled set
+    # Pool of all training indices, start with initial_size labeled samples
     all_indices = list(range(len(full_train_dataset)))
     np.random.shuffle(all_indices)
-    labeled_indices = []
-    unlabeled_indices = all_indices.copy()
+    labeled_indices = all_indices[:initial_size]
+    unlabeled_indices = all_indices[initial_size:]
 
     log_path = os.path.join(output_root, f'{data_flag}_passive_log.txt')
+    plot_dir = os.path.join(output_root, 'plots')
+    os.makedirs(plot_dir, exist_ok=True)
+
+    # Track metrics across rounds for plotting
+    labeled_sizes = []
+    test_losses, test_aucs, test_accs = [], [], []
 
     print('==> Starting passive learning...')
 
-    num_rounds = len(all_indices) // samples_per_round
-    print(f'Train set size: {len(all_indices)}, rounds to run: {num_rounds}')
+    num_rounds = len(unlabeled_indices) // samples_per_round
+    print(f'Train set size: {len(all_indices)}, initial labeled: {initial_size}, '
+          f'unlabeled: {len(unlabeled_indices)}, rounds to run: {num_rounds}')
+
+    def run_round(round_label, loader, labeled_count):
+        """Train with early stopping (max_epochs or val loss stops dropping), log every epoch."""
+        prev_val_loss = float('inf')
+        final_val_metrics = None
+        final_test_metrics = None
+        with open(log_path, 'a') as f:
+            f.write(f'{round_label} labeled={labeled_count}\n')
+        for epoch in range(max_epochs):
+            train_one_epoch(model, loader, criterion, optimizer, device)
+            val_metrics = evaluate(model, val_evaluator, val_loader, criterion, device)
+            epoch_log = ('  epoch %d  val loss: %.5f  auc: %.5f  acc: %.5f'
+                         % (epoch + 1, val_metrics[0], val_metrics[1], val_metrics[2]))
+            print(epoch_log)
+            with open(log_path, 'a') as f:
+                f.write(epoch_log + '\n')
+            final_val_metrics = val_metrics
+            if val_metrics[0] >= prev_val_loss:
+                print(f'  Early stop at epoch {epoch + 1} (val loss did not decrease)')
+                break
+            prev_val_loss = val_metrics[0]
+        final_test_metrics = evaluate(model, test_evaluator, test_loader, criterion, device)
+        summary = ('  test  loss: %.5f  auc: %.5f  acc: %.5f\n'
+                   % (final_test_metrics[0], final_test_metrics[1], final_test_metrics[2]))
+        print(summary)
+        with open(log_path, 'a') as f:
+            f.write(summary)
+        return final_val_metrics, final_test_metrics
+
+    # Round 0: train on initial labeled set
+    print(f'\n[Round 0] Initial training on {initial_size} samples...')
+    initial_loader = data.DataLoader(
+        data.Subset(full_train_dataset, labeled_indices), batch_size=batch_size, shuffle=True)
+    _, test_metrics = run_round('[Round 0]', initial_loader, initial_size)
+    labeled_sizes.append(initial_size)
+    test_losses.append(test_metrics[0])
+    test_aucs.append(test_metrics[1])
+    test_accs.append(test_metrics[2])
 
     for round_idx in range(num_rounds):
         # Randomly select samples_per_round from unlabeled pool
@@ -102,31 +148,33 @@ def main(data_flag, output_root, samples_per_round, epochs_per_round,
         for s in selected:
             unlabeled_indices.remove(s)
 
-        print(f'\n[Round {round_idx + 1}/{num_rounds}] Labeled pool size: {len(labeled_indices)}, '
+        print(f'\n[Round {round_idx + 1}/{num_rounds}] Labeled: {len(labeled_indices)}, '
               f'Added: {n_select}, Unlabeled remaining: {len(unlabeled_indices)}')
 
-        # Build loader from current labeled set
-        labeled_subset = data.Subset(full_train_dataset, labeled_indices)
-        train_loader = data.DataLoader(dataset=labeled_subset, batch_size=batch_size, shuffle=True)
+        train_loader = data.DataLoader(
+            data.Subset(full_train_dataset, labeled_indices), batch_size=batch_size, shuffle=True)
 
-        # Train for epochs_per_round epochs (no model reinit)
-        for epoch in range(epochs_per_round):
-            train_one_epoch(model, train_loader, criterion, optimizer, device)
+        _, test_metrics = run_round(f'[Round {round_idx + 1}]', train_loader, len(labeled_indices))
+        labeled_sizes.append(len(labeled_indices))
+        test_losses.append(test_metrics[0])
+        test_aucs.append(test_metrics[1])
+        test_accs.append(test_metrics[2])
 
-        # Evaluate on val and test
-        val_metrics = evaluate(model, val_evaluator, val_loader, criterion, device)
-        test_metrics = evaluate(model, test_evaluator, test_loader, criterion, device)
-
-        val_log = 'val   loss: %.5f  auc: %.5f  acc: %.5f' % (val_metrics[0], val_metrics[1], val_metrics[2])
-        test_log = 'test  loss: %.5f  auc: %.5f  acc: %.5f' % (test_metrics[0], test_metrics[1], test_metrics[2])
-        log_line = (f'[Round {round_idx + 1}] labeled={len(labeled_indices)}\n'
-                    f'  {val_log}\n'
-                    f'  {test_log}\n')
-        print(log_line)
-
-        with open(log_path, 'a') as f:
-            f.write(log_line)
-
+    # Plot test metrics vs labeled set size
+    fig, axes = plt.subplots(1, 3, figsize=(15, 4))
+    for ax, values, ylabel in zip(axes,
+                                   [test_losses, test_aucs, test_accs],
+                                   ['Loss', 'AUC', 'ACC']):
+        ax.plot(labeled_sizes, values, marker='o', markersize=3, linewidth=1)
+        ax.set_xlabel('Labeled set size')
+        ax.set_ylabel(ylabel)
+        ax.set_title(f'Test {ylabel} vs Labeled Size')
+        ax.grid(True)
+    fig.tight_layout()
+    plot_path = os.path.join(plot_dir, 'test_metrics_per_round.png')
+    fig.savefig(plot_path, dpi=150, bbox_inches='tight')
+    plt.close(fig)
+    print(f'Plot saved to {plot_path}')
     print(f'Done. Log saved to {log_path}')
 
 
@@ -172,8 +220,8 @@ if __name__ == '__main__':
     parser.add_argument('--output_root', default='./output', type=str)
     parser.add_argument('--samples_per_round', default=10, type=int,
                         help='number of randomly selected samples added per round')
-    parser.add_argument('--epochs_per_round', default=5, type=int,
-                        help='number of training epochs per round')
+    parser.add_argument('--max_epochs', default=5, type=int,
+                        help='max epochs per round; stops early if val loss does not decrease')
     parser.add_argument('--size', default=28, type=int)
     parser.add_argument('--gpu_ids', default='0', type=str)
     parser.add_argument('--batch_size', default=32, type=int)
@@ -186,6 +234,8 @@ if __name__ == '__main__':
     parser.add_argument('--model_flag', default='resnet18',
                         help='choose backbone, resnet18/resnet50', type=str)
     parser.add_argument('--run', default='model1', type=str)
+    parser.add_argument('--initial_size', default=200, type=int,
+                        help='number of labeled samples to start with before active learning rounds')
 
     args = parser.parse_args()
 
@@ -193,7 +243,7 @@ if __name__ == '__main__':
         data_flag=args.data_flag,
         output_root=args.output_root,
         samples_per_round=args.samples_per_round,
-        epochs_per_round=args.epochs_per_round,
+        max_epochs=args.max_epochs,
         gpu_ids=args.gpu_ids,
         batch_size=args.batch_size,
         size=args.size,
@@ -204,4 +254,5 @@ if __name__ == '__main__':
         as_rgb=args.as_rgb,
         shape_transform=args.shape_transform,
         run=args.run,
+        initial_size=args.initial_size,
     )

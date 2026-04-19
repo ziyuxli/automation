@@ -220,7 +220,7 @@ if __name__ == '__main__':
     parser.add_argument('--output_root', default='./output', type=str)
     parser.add_argument('--samples_per_round', default=10, type=int,
                         help='number of randomly selected samples added per round')
-    parser.add_argument('--max_epochs', default=5, type=int,
+    parser.add_argument('--max_epochs', default=10, type=int,
                         help='max epochs per round; stops early if val loss does not decrease')
     parser.add_argument('--size', default=28, type=int)
     parser.add_argument('--gpu_ids', default='0', type=str)

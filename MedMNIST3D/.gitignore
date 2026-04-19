@@ -1,0 +1,6 @@
+__pycache__/
+comparison_plots/
+output_gaussian/
+output_passive/
+scripts/
+slurm_out/

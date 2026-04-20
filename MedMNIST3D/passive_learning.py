@@ -12,14 +12,44 @@ import torch.nn as nn
 import torch.utils.data as data
 import torchvision.transforms as transforms
 from acsconv.converters import ACSConverter, Conv2_5dConverter, Conv3dConverter
+from lapgod import lapgod_greedy
 from medmnist import INFO, Evaluator
 from models import ResNet18, ResNet50
+from sklearn.decomposition import PCA
 from utils import Transform3D, model_to_syncbn
+
+
+def lapgod_initial_selection(dataset, initial_size, pca_components=50, batch_size=32,
+                              alpha=1e-2, beta=1e-3, n_neighbors=5,
+                              weight_mode='binary', heat_kernel_t=1.0):
+    """Select initial_size samples via LapGOD greedy on PCA-reduced features."""
+    print('==> LapGOD: extracting features...')
+    loader = data.DataLoader(dataset, batch_size=batch_size, shuffle=False)
+    features = []
+    with torch.no_grad():
+        for inputs, _ in loader:
+            features.append(inputs.view(inputs.size(0), -1).cpu().numpy())
+    X = np.concatenate(features, axis=0)
+
+    n_components = min(pca_components, X.shape[0], X.shape[1])
+    print(f'==> LapGOD: PCA to {n_components} components...')
+    X = PCA(n_components=n_components).fit_transform(X)
+
+    print(f'==> LapGOD: greedy selection of {initial_size} samples...')
+    selected, _, _ = lapgod_greedy(
+        X, n_select=initial_size, alpha=alpha, beta=beta,
+        n_neighbors=n_neighbors, weight_mode=weight_mode,
+        heat_kernel_t=heat_kernel_t, return_objective_history=True)
+
+    selected_set = set(selected)
+    remaining = [i for i in range(len(X)) if i not in selected_set]
+    return selected, remaining
 
 
 def main(data_flag, output_root, samples_per_round, max_epochs,
          gpu_ids, batch_size, size, conv, pretrained_3d, download, model_flag,
-         as_rgb, shape_transform, run, initial_size=200):
+         as_rgb, shape_transform, run, initial_size=200, init_strategy='random',
+         pca_components=50, alpha=1e-2, beta=1e-3, n_neighbors=5):
 
     lr = 0.001
 
@@ -84,9 +114,14 @@ def main(data_flag, output_root, samples_per_round, max_epochs,
 
     # Pool of all training indices, start with initial_size labeled samples
     all_indices = list(range(len(full_train_dataset)))
-    np.random.shuffle(all_indices)
-    labeled_indices = all_indices[:initial_size]
-    unlabeled_indices = all_indices[initial_size:]
+    if init_strategy == 'lapgod':
+        labeled_indices, unlabeled_indices = lapgod_initial_selection(
+            full_train_dataset, initial_size, pca_components=pca_components,
+            batch_size=batch_size, alpha=alpha, beta=beta, n_neighbors=n_neighbors)
+    else:
+        np.random.shuffle(all_indices)
+        labeled_indices = all_indices[:initial_size]
+        unlabeled_indices = all_indices[initial_size:]
 
     log_path = os.path.join(output_root, f'{data_flag}_passive_log.txt')
     plot_dir = os.path.join(output_root, 'plots')
@@ -236,6 +271,17 @@ if __name__ == '__main__':
     parser.add_argument('--run', default='model1', type=str)
     parser.add_argument('--initial_size', default=200, type=int,
                         help='number of labeled samples to start with before active learning rounds')
+    parser.add_argument('--init_strategy', default='random', type=str,
+                        choices=['random', 'lapgod'],
+                        help='initialization strategy: random or lapgod (LapGOD greedy, A-optimal design)')
+    parser.add_argument('--pca_components', default=50, type=int,
+                        help='number of PCA components for LapGOD feature reduction')
+    parser.add_argument('--alpha', default=1e-2, type=float,
+                        help='LapGOD alpha (graph regularization weight)')
+    parser.add_argument('--beta', default=1e-3, type=float,
+                        help='LapGOD beta (identity regularization weight)')
+    parser.add_argument('--n_neighbors', default=2, type=int,
+                        help='LapGOD KNN graph neighbors')
 
     args = parser.parse_args()
 
@@ -255,4 +301,9 @@ if __name__ == '__main__':
         shape_transform=args.shape_transform,
         run=args.run,
         initial_size=args.initial_size,
+        init_strategy=args.init_strategy,
+        pca_components=args.pca_components,
+        alpha=args.alpha,
+        beta=args.beta,
+        n_neighbors=args.n_neighbors,
     )

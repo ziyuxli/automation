@@ -85,9 +85,50 @@ class GaussianDropoutHookManager:
         self.handles = []
 
 
+class BernoulliDropoutHookManager:
+    #Add inverted Bernoulli dropout to Conv/Linear outputs during train() mode:
+    #output <- output * mask
+    # mask ~ Bernoulli(1-p) / (1-p), Bernoulli is the standard mask for MC dropout
+    #Support MC Bernoulli sampling using same model
+    
+    def __init__(self, model, drop_prob=0.2, apply_to_linear=True, apply_to_conv=True):
+        assert 0.0 <= drop_prob < 1.0
+        self.model = model
+        self.drop_prob = drop_prob
+        self.keep_prob = 1.0 - drop_prob
+        self.handles = []
+
+        module_types = []
+        if apply_to_conv:
+            module_types.extend([nn.Conv2d, nn.Conv3d])
+        if apply_to_linear:
+            module_types.extend([nn.Linear])
+        module_types = tuple(module_types)
+
+        for module in self.model.modules():
+            if isinstance(module, module_types):
+                h = module.register_forward_hook(self._hook_fn)
+                self.handles.append(h)
+
+    def _hook_fn(self, module, inputs, output):
+        if not module.training:
+            return output
+        if self.drop_prob <= 0:
+            return output
+        if not torch.is_tensor(output):
+            return output
+
+        mask = torch.bernoulli(torch.full_like(output, self.keep_prob)) / self.keep_prob
+        return output * mask
+
+    def remove(self):
+        for h in self.handles:
+            h.remove()
+        self.handles = []
+
 def set_mc_sampling_mode(model):
     """
-    Turn on stochastic Gaussian-dropout forward passes,
+    Turn on stochastic Gaussian-dropout/Bernoulli MC forward passes,
     but freeze BN / SyncBN to avoid updating running stats.
     """
     model.train()
@@ -287,9 +328,9 @@ def select_samples(
 
 def main(data_flag, output_root, samples_per_round, max_epochs,
          gpu_ids, batch_size, size, conv, pretrained_3d, download, model_flag,
-         as_rgb, shape_transform, run, initial_size=200,
-         strategy='passive', gaussian_drop_prob=0.2, mc_samples=20,
-         seed=42):
+         as_rgb, shape_transform, run, dropout_type, initial_size=200,
+         strategy='passive', bernoulli_mc_drop_prob = 0.2, gaussian_drop_prob=0.2,
+         mc_samples=20, seed=42):
 
     seed_everything(seed)
     lr = 0.001
@@ -342,12 +383,21 @@ def main(data_flag, output_root, samples_per_round, max_epochs,
 
     # Gaussian dropout hook is only really used when strategy is entropy/bald,
     # but attaching it here keeps the script unified.
-    gd_manager = GaussianDropoutHookManager(
-        model=model,
-        drop_prob=gaussian_drop_prob,
-        apply_to_linear=True,
-        apply_to_conv=True
-    )
+    drop_manager = None 
+    if dropout_type =='gaussian':
+        drop_manager = GaussianDropoutHookManager(
+            model=model,
+            drop_prob=gaussian_drop_prob,
+            apply_to_linear=True,
+            apply_to_conv=True
+        )
+    elif dropout_type =="bernoulli_mc": #do the same but for MC dropout 
+        drop_manager = BernoulliDropoutHookManager(
+            model=model,
+            drop_prob=bernoulli_mc_drop_prob,
+            apply_to_linear=True,
+            apply_to_conv=True
+        )
 
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
@@ -477,15 +527,17 @@ def main(data_flag, output_root, samples_per_round, max_epochs,
     fig.savefig(plot_path, dpi=150, bbox_inches='tight')
     plt.close(fig)
 
-    gd_manager.remove()
+    if drop_manager is not None:
+        drop_manager.remove()
 
     print(f'Plot saved to {plot_path}')
     print(f'Done. Log saved to {log_path}')
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Passive / Active Learning for MedMNIST3D with optional Gaussian Dropout')
+    parser = argparse.ArgumentParser(description='Passive / Active Learning for MedMNIST3D with optional Gaussian Dropout or Bernoulli MC Dropout')
 
+    
     parser.add_argument('--data_flag', default='organmnist3d', type=str)
     parser.add_argument('--output_root', default='./output', type=str)
     parser.add_argument('--samples_per_round', default=10, type=int,
@@ -512,7 +564,12 @@ if __name__ == '__main__':
                         choices=['passive', 'random', 'entropy', 'bald'],
                         help='sample selection strategy')
     parser.add_argument('--gaussian_drop_prob', default=0.2, type=float,
-                        help='Gaussian dropout probability for MC sampling')
+                    help='Gaussian dropout probability for MC sampling')
+    parser.add_argument('--dropout_type', default='gaussian', type=str,
+                    choices=['gaussian', 'bernoulli_mc', 'none'],
+                    help='stochastic hook type for MC sampling')
+    parser.add_argument('--bernoulli_mc_drop_prob', default=0.2, type=float,
+                    help='Bernoulli MC dropout probability for hook-based sampling')
     parser.add_argument('--mc_samples', default=20, type=int,
                         help='number of stochastic forward passes for active learning')
     parser.add_argument('--seed', default=42, type=int)
@@ -536,7 +593,9 @@ if __name__ == '__main__':
         run=args.run,
         initial_size=args.initial_size,
         strategy=args.strategy,
+        dropout_type=args.dropout_type,
         gaussian_drop_prob=args.gaussian_drop_prob,
+        bernoulli_mc_drop_prob=args.bernoulli_mc_drop_prob,
         mc_samples=args.mc_samples,
         seed=args.seed,
     )

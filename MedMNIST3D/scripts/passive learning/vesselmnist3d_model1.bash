@@ -34,7 +34,7 @@ conda activate /ocean/projects/cis250072p/wanyuef/conda-envs/medmnist
 ALL_NODES=($(scontrol show hostnames $SLURM_NODELIST))
 
 COMMANDS=(
-"python passive_learning.py --data_flag fracturemnist3d --download --gpu_ids 0 --conv Conv3d --output_root /ocean/projects/cis250072p/wanyuef/asu/output --as_rgb --shape_transform --batch_size 32 --model_flag resnet50 --run passive-model1 --samples_per_round 20 --max_epochs 5 --initial_size 200"
+"python passive_learning.py --data_flag vesselmnist3d --download --gpu_ids 0 --conv Conv3d --output_root /ocean/projects/cis250072p/wanyuef/asu/output --as_rgb --shape_transform --batch_size 32 --model_flag resnet50 --run passive-model1 --samples_per_round 20 --max_epochs 5 --initial_size 200"
 )
 
 for i in "${!COMMANDS[@]}"; do

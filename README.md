@@ -32,6 +32,7 @@ pip install acsconv
 ---
 
 ## How to Run
+You can directly use the script under run to run
 
 ### Basic Command
 

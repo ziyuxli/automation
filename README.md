@@ -1,4 +1,4 @@
-# MedMNIST3D Active Learning (Gaussian / MC Dropout)
+# MedMNIST3D Active Learning
 
 This repository implements **Passive Learning** and **Active Learning** strategies on MedMNIST3D datasets, with support for:
 
